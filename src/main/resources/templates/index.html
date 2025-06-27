@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Spring Boot Thymeleaf Example</title>
+    <title>TGirl Clicker</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
 </head>
 <body>
-    <h1>Welcome to Spring Boot with Thymeleaf!</h1>
-    <p>This is a simple example of using Thymeleaf with Spring Boot.</p>
+    <div class="container">
+        <h1>TGirl.click</h1>
 
-    <div th:if="${message}">
-        <p th:text="${message}"></p>
+        <form action="/" method="post">
+            <input aria-label="link" type="url" name="link" placeholder="Enter your link here..." required>
+            <br>
+            <button type="submit">Submit Link</button>
+        </form>
     </div>
 </body>
