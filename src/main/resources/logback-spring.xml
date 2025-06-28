@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+
+<configuration scan="true">
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>elk.vanilla.sh:5000</destination>
+
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"application":"gg.nya.tgirlclicker"}</customFields>
+        </encoder>
+
+        <ssl>
+            <trustStore>
+                <location>classpath:certificates/truststore.jks</location>
+                <password>changeit</password>
+            </trustStore>
+        </ssl>
+    </appender>
+
+    <logger name="gg.nya.tgirlclicker" level="INFO" additivity="false">
+        <appender-ref ref="logstash"/>
+    </logger>
+
+    <root>
+        <level value="WARN"/>
+        <appender-ref ref="logstash"/>
+    </root>
+</configuration>
