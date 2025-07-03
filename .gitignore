@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Certificate Files ###
+**/*.crt
+**/*.key
+**/*.jks

@@ -5,10 +5,11 @@
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
     <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>elk.vanilla.sh:5000</destination>
+        <destination>localhost:5000</destination>
 
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <customFields>{"application":"gg.nya.tgirlclicker"}</customFields>
+            <customFields>{"environment":"development"}</customFields>
         </encoder>
 
         <ssl>
@@ -19,12 +20,22 @@
         </ssl>
     </appender>
 
+    <!-- Console appender for local development -->
+    <logger name="org.springframework" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Keep startup logs in the console -->
+    <logger name="gg.nya.tgirlclicker.TgirlclickerApplication" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Send other application logs to Logstash -->
     <logger name="gg.nya.tgirlclicker" level="INFO" additivity="false">
         <appender-ref ref="logstash"/>
     </logger>
 
-    <root>
-        <level value="WARN"/>
-        <appender-ref ref="logstash"/>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>
