@@ -1,16 +1,46 @@
 package gg.nya.tgirlclicker.controller;
 
+import gg.nya.tgirlclicker.repository.Link;
+import gg.nya.tgirlclicker.service.LinkService;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.Optional;
 
 @Controller
 public class PageController {
-    Logger log = org.slf4j.LoggerFactory.getLogger(PageController.class);
+    private static final Logger log = LoggerFactory.getLogger(PageController.class);
+
+    private final LinkService linkService;
+
+    @Autowired
+    public PageController(LinkService linkService) {
+        this.linkService = linkService;
+    }
 
     @GetMapping("/")
     public String index() {
-        log.info("Test Log");
-        return "index"; // This will resolve to src/main/resources/templates/index.html
+        log.debug("index, main page was served.");
+        return "index";
+    }
+
+    @GetMapping("/{shorthand}")
+    public String redirectToLink(@PathVariable String shorthand) {
+        log.info("redirectToLink, request to resolve shorthand: {}", shorthand);
+        Optional<Link> resolvedLink = linkService.retrieveAndIncrementClickCount(shorthand);
+        if(resolvedLink.isEmpty()) {
+            log.warn("redirectToLink, no link found for shorthand: {}", shorthand);
+            return "redirect:/";
+        }
+
+        log.info("redirectToLink, resolved link: {} -> {}",
+                resolvedLink.get().getShorthand(),
+                resolvedLink.get().getLink());
+
+        return "redirect:" + resolvedLink.get().getLink();
     }
 }

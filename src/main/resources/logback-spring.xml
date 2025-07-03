@@ -9,8 +9,9 @@
         <destination>${logstash.destination}</destination>
 
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <customFields>{"application":"gg.nya.tgirlclicker"}</customFields>
-            <customFields>{"environment":"${spring.profiles.active}"}</customFields>
+            <customFields>{"application":"gg.nya.tgirlclicker",
+                            "version":"${application.version}",
+                            "environment": "${spring.profiles.active}"}</customFields>
         </encoder>
 
         <ssl>
@@ -32,7 +33,7 @@
     </logger>
 
     <!-- Send other application logs to Logstash -->
-    <logger name="gg.nya.tgirlclicker" level="INFO" additivity="false">
+    <logger name="gg.nya.tgirlclicker" level="DEBUG" additivity="false">
         <appender-ref ref="logstash"/>
     </logger>
 
