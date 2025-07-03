@@ -3,13 +3,14 @@
 
 <configuration scan="true">
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <property resource="application.properties"/>
 
     <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>localhost:5000</destination>
+        <destination>${logstash.destination}</destination>
 
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <customFields>{"application":"gg.nya.tgirlclicker"}</customFields>
-            <customFields>{"environment":"development"}</customFields>
+            <customFields>{"environment":"${spring.profiles.active}"}</customFields>
         </encoder>
 
         <ssl>
