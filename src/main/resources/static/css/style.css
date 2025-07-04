@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Readex+Pro');
 
 body {
     margin: 0;
@@ -37,6 +38,46 @@ p {
     font-size: 1.2em;
     text-shadow: 0 0 4px white, 1px 1px 2px white;
     font-weight: 500;
+}
+
+.gg-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    height: 100%;
+}
+
+.gg {
+    font-size: 15vh;
+    font-family: "Readex Pro", sans-serif;
+    text-shadow: 0 0 12px white, 3px 3px 6px white, -3px -3px 6px white, 3px -3px 6px white, -3px 3px 6px white;
+}
+
+@media (max-width: 1000px) {
+    .gg {
+        font-size: 5vh;
+    }
+}
+
+.gg:nth-child(1) {
+    color: #F5A9B8;
+}
+
+.gg:nth-child(2) {
+    color: #5BCEFA;
+}
+
+.gg:nth-child(3) {
+    color: #F5A9B8;
+}
+
+.gg:nth-child(4) {
+    color: #5BCEFA;
+}
+
+.gg:nth-child(5) {
+    color: #F5A9B8;
 }
 
 input {

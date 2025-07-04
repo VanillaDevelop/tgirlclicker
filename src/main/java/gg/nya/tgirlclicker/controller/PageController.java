@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -23,9 +24,16 @@ public class PageController {
     }
 
     @GetMapping("/")
-    public String index() {
-        log.debug("index, main page was served.");
+    public String index(Model model) {
+        int totalClickCount = linkService.getTotalClickCount();
+        model.addAttribute("totalClickCount", totalClickCount);
+        log.debug("index, main page was served with total click count: {}", totalClickCount);
         return "index";
+    }
+
+    @GetMapping("/redirect")
+    public String redirect() {
+        return "redirect";
     }
 
     @GetMapping("/{shorthand}")

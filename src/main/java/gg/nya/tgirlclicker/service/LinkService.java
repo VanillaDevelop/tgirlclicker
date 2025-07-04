@@ -32,4 +32,9 @@ public class LinkService {
         }
         return linkOpt;
     }
+
+    public int getTotalClickCount() {
+        log.debug("getTotalClickCount, calculating total click count.");
+        return linkRepository.sumClickCount();
+    }
 }

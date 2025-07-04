@@ -35,6 +35,7 @@
     <!-- Send other application logs to Logstash -->
     <logger name="gg.nya.tgirlclicker" level="DEBUG" additivity="false">
         <appender-ref ref="logstash"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
 
     <root level="INFO">
