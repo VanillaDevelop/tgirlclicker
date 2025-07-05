@@ -2,6 +2,11 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="layout :: head"></head>
 <body>
+<div class="heart"></div>
+<div class="heart"></div>
+<div class="heart"></div>
+<div class="heart"></div>
+<div class="heart"></div>
 <div class="gg-container">
     <div class="gg">GOOD GIRL</div>
     <div class="gg">GOOD GIRL</div>
@@ -10,29 +15,10 @@
     <div class="gg">GOOD GIRL</div>
 </div>
 </body>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const ggElements = document.querySelectorAll('.gg');
-    
-    // Hide all elements initially
-    ggElements.forEach(el => el.style.opacity = '0');
-    
-    // Flash each element multiple times in random order
-    const indices = Array.from({length: ggElements.length}, (_, i) => i);
-    
-    for (let flash = 0; flash < 1; flash++) {
-        // Shuffle the indices for each flash cycle
-        const shuffledIndices = [...indices].sort(() => Math.random() - 0.5);
-
-        shuffledIndices.forEach((index, position) => {
-            setTimeout(() => {
-                ggElements[index].style.opacity = '0.6';
-                setTimeout(() => {
-                    ggElements[index].style.opacity = '0';
-                }, 500);
-            }, position * 80 + flash * 900); // 20ms offset between elements, 150ms between flashes
-        });
-    }
-});
+<script th:inline="javascript">
+    // Redirect to the main page after 1 second
+    setTimeout(function() {
+        window.location.href = [[${link}]];
+    }, 1000);
 </script>
 </html>

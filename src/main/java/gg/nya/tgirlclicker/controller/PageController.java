@@ -31,13 +31,8 @@ public class PageController {
         return "index";
     }
 
-    @GetMapping("/redirect")
-    public String redirect() {
-        return "redirect";
-    }
-
     @GetMapping("/{shorthand}")
-    public String redirectToLink(@PathVariable String shorthand) {
+    public String redirectToLink(@PathVariable String shorthand, Model model) {
         log.info("redirectToLink, request to resolve shorthand: {}", shorthand);
         Optional<Link> resolvedLink = linkService.retrieveAndIncrementClickCount(shorthand);
         if(resolvedLink.isEmpty()) {
@@ -49,6 +44,8 @@ public class PageController {
                 resolvedLink.get().getShorthand(),
                 resolvedLink.get().getLink());
 
-        return "redirect:" + resolvedLink.get().getLink();
+        model.addAttribute("link", resolvedLink.get().getLink());
+
+        return "redirect";
     }
 }
