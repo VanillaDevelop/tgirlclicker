@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head}"></head>
+<body>
+<div class="container container-rough">
+    <h1>
+        <button class="sb sb3" th:UUID="${UUID3}" th:onclick="|window.location.href='/auth/' + this.getAttribute('UUID')|"></button>
+        About TGirl.click
+    </h1>
+    <div class="qna">
+        <strong>What is Tgirl.click?</strong>
+        TGirl.click is a link shortener / redirect service.
+    </div>
+    <div class="qna">
+        <strong>How can I create vanity links?</strong>
+        <div>
+            Vanity links with specific names are not a publicly accessible feature at this time. If you really want one, shoot me a message at
+            <a href="mailto:vanilla@nya.gg">vanilla@nya.gg</a>.
+        </div>
+    </div>
+    <div class="qna">
+        <strong>What is the retention policy of links?</strong>
+        At this time, links are stored indefinitely. However, links may be deleted without prior notice if they are deemed inappropriate or
+    </div>
+</div>
+</body>
+</html>

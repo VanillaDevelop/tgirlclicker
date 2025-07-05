@@ -24,6 +24,22 @@ body {
     width: 90%;
 }
 
+.container.container-rough {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(15px);
+    border: 3px solid rgba(245, 169, 184, 0.6);
+}
+
+.qna {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    margin-block: 1em;
+    font-family: "Readex Pro", sans-serif;
+    color: #da4d6a;
+    text-align: left;
+}
+
 h1 {
     color: #F5A9B8;
     font-size: 2.5em;
@@ -46,6 +62,30 @@ p {
     align-items: center;
     justify-content: space-around;
     height: 100%;
+}
+
+.sb {
+    height: 5px;
+    width: 5px;
+    position:absolute;
+    cursor: text;
+    background-color: #fff0;
+    border: none;
+}
+
+.sb1 {
+    top: 90px;
+    left: 205px;
+}
+
+.sb2 {
+    top: 112px;
+    left: 251px;
+}
+
+.sb3 {
+    top: 90px;
+    left: 351px;
 }
 
 .gg {
@@ -107,7 +147,7 @@ input:focus {
     box-shadow: 0 0 20px rgba(245, 169, 184, 0.8);
 }
 
-button {
+.button {
     font-weight: bold;
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(10px);
@@ -120,7 +160,7 @@ button {
     transition: transform 0.2s;
 }
 
-button:hover {
+.button:hover {
     transform: scale(1.05);
 }
 

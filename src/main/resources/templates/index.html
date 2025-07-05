@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="layout :: head"></head>
+<head th:replace="~{layout :: head}"></head>
 <body>
     <div class="container">
-        <h1>TGirl.click</h1>
+        <h1>
+            <button class="sb sb1" th:UUID="${UUID1}" th:onclick="|window.location.href='/auth/' + this.getAttribute('UUID')|"></button>
+            <button class="sb sb2" th:UUID="${UUID2}" th:onclick="|window.location.href='/auth/' + this.getAttribute('UUID')|"></button>
+            TGirl.click
+        </h1>
         <p>Successfully served <span th:text="${totalClickCount}">0</span> pages!</p>
 
         <form action="/" method="post">
             <input aria-label="link" type="url" name="link" placeholder="Enter your link here..." required>
             <br>
-            <button type="submit">Shorten Link</button>
-            <button type="submit">Freaky Link</button>
+            <div th:if="${userSecretMode}">
+                <button class="button" type="submit"><span>Special</span> Shorten Link</button>
+            </div>
+            <button class="button" type="submit">Shorten Link</button>
         </form>
     </div>
 </body>
