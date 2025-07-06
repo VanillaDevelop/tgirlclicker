@@ -33,8 +33,41 @@ public class LinkService {
         return linkOpt;
     }
 
+    public Link createOrFindLink(String link, boolean alternativeMode) {
+        log.info("createLink, link: {}, alternativeMode: {}", link, alternativeMode);
+        Optional<Link> existingLink = linkRepository.findLinkByLinkAndAlternativeMode(link, alternativeMode);
+        if (existingLink.isPresent()) {
+            log.debug("createLink, link already exists: {} (alt: {}) -> {}", link, alternativeMode, existingLink.get().getShorthand());
+            return existingLink.get();
+        }
+        String shorthand = generateUniqueShorthand();
+        Link newLink = new Link(link, alternativeMode, shorthand);
+        linkRepository.save(newLink);
+        log.info("createLink, new link created: {} (alt: {}) -> {}", link, alternativeMode, shorthand);
+
+        return newLink;
+    }
+
     public int getTotalClickCount() {
         log.debug("getTotalClickCount, calculating total click count.");
         return linkRepository.sumClickCount();
+    }
+
+    private String generateUniqueShorthand() {
+        String shorthand;
+        int attempts = 0;
+        do {
+            shorthand = generateRandomShorthand((attempts / 100) + 4);
+            attempts++;
+        } while (linkRepository.existsByShorthand(shorthand));
+        log.debug("generateUniqueShorthand, generated unique shorthand {} after {} attempts", shorthand, attempts);
+        return shorthand;
+    }
+
+    private String generateRandomShorthand(int length) {
+        if (length > 8) {
+            throw new IllegalArgumentException("Shorthand length must not exceed 8 characters.");
+        }
+        return java.util.UUID.randomUUID().toString().substring(0, length);
     }
 }

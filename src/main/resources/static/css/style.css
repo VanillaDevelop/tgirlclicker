@@ -30,6 +30,12 @@ body {
     border: 3px solid rgba(245, 169, 184, 0.6);
 }
 
+.special {
+    font-family: "Pacifico", cursive;
+    color: #F5A9B8;
+    text-shadow: 0 0 4px white, 1px 1px 2px white;
+}
+
 .qna {
     display: flex;
     flex-direction: column;
@@ -158,6 +164,8 @@ input:focus {
     border-radius: 10px;
     cursor: pointer;
     transition: transform 0.2s;
+    margin-bottom: 0.5em;
+    width: 100%;
 }
 
 .button:hover {

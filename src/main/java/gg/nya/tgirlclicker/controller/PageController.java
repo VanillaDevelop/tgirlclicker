@@ -1,15 +1,21 @@
 package gg.nya.tgirlclicker.controller;
 
+import gg.nya.tgirlclicker.controller.model.CreateLinkDto;
 import gg.nya.tgirlclicker.repository.Link;
 import gg.nya.tgirlclicker.service.LinkService;
 import gg.nya.tgirlclicker.session.UserSession;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Optional;
 
@@ -33,13 +39,35 @@ public class PageController {
         model.addAttribute("UUID1", userSession.getAuthorizeUUIDs().get(0));
         model.addAttribute("UUID2", userSession.getAuthorizeUUIDs().get(1));
         model.addAttribute("userSecretMode", userSession.isSecretMode());
+        if (userSession.isSecretMode()) {
+            log.debug("index, user is in secret mode, serving UUID4");
+            model.addAttribute("UUID4", userSession.getAuthorizeUUIDs().get(3));
+        }
         log.debug("index, main page was served with total click count: {}", totalClickCount);
         return "index";
     }
 
-    @GetMapping("/auth/{UUID}")
-    public String auth(@PathVariable String UUID) {
-        log.debug("auth, authorization page was served");
+    @PostMapping("/links")
+    public String createLink(@Valid @ModelAttribute CreateLinkDto createLinkDto, BindingResult bindingResult) {
+        log.info("createLink, request to create link: {}", createLinkDto);
+        if (bindingResult.hasErrors()) {
+            log.warn("createLink, validation errors: {}", bindingResult.getAllErrors());
+            return "redirect:/";
+        }
+        boolean alternativeMode = false;
+        if (userSession.isSecretMode() && createLinkDto.getAlternativeMode() != null
+                && createLinkDto.getAlternativeMode().equals(userSession.getAuthorizeUUIDs().get(3))) {
+            alternativeMode = true;
+            log.debug("createLink, alternative mode enabled for link creation");
+        }
+        Link createdLink = linkService.createOrFindLink(createLinkDto.getLink(), alternativeMode);
+        log.info("createLink, link created successfully: {}", createdLink);
+        return "redirect:/";
+    }
+
+    @PostMapping("/auth")
+    public String auth(@RequestBody String UUID) {
+        log.debug("auth, user authorization request with UUID: {}", UUID);
         userSession.authorize(java.util.UUID.fromString(UUID));
         return "redirect:/";
     }

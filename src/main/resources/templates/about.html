@@ -4,12 +4,12 @@
 <body>
 <div class="container container-rough">
     <h1>
-        <button class="sb sb3" th:UUID="${UUID3}" th:onclick="|window.location.href='/auth/' + this.getAttribute('UUID')|"></button>
+        <button class="sb sb3" th:UUID="${UUID3}" th:onclick="|postUUID(this.getAttribute('UUID'))|"></button>
         About TGirl.click
     </h1>
     <div class="qna">
         <strong>What is Tgirl.click?</strong>
-        TGirl.click is a link shortener / redirect service.
+        TGirl.click is a link shortener / redirect service that makes it more (or less) likely that your friends will click on your links.
     </div>
     <div class="qna">
         <strong>How can I create vanity links?</strong>
@@ -20,8 +20,26 @@
     </div>
     <div class="qna">
         <strong>What is the retention policy of links?</strong>
-        At this time, links are stored indefinitely. However, links may be deleted without prior notice if they are deemed inappropriate or
+        At this time, links are stored indefinitely. However, links may be deleted without prior notice if they are deemed inappropriate or appear to be the result of spam.
+        Always store the original link in a safe place, as TGirl.click is not responsible for lost links.
     </div>
+
+    <button class="button" onclick="window.location.href='/'">
+        Back to Home
+    </button>
 </div>
+<script>
+    function postUUID(uuid) {
+        fetch('/auth', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain'
+            },
+            body: uuid
+        }).then(response => {
+            window.location.reload();
+        });
+    }
+</script>
 </body>
 </html>

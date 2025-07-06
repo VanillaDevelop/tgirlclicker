@@ -11,6 +11,9 @@ public class Link {
 
     @Column(nullable = false)
     private String shorthand;
+
+    @Column(nullable = false)
+    private boolean alternativeMode = false;
     
     @Column(nullable = false)
     private String link;
@@ -20,8 +23,10 @@ public class Link {
     
     public Link() {}
     
-    public Link(String link) {
+    public Link(String link, boolean alternativeMode, String shorthand) {
         this.link = link;
+        this.alternativeMode = alternativeMode;
+        this.shorthand = shorthand;
     }
     
     public Long getId() {
@@ -58,5 +63,23 @@ public class Link {
 
     public void setShorthand(String shorthand) {
         this.shorthand = shorthand;
+    }
+
+    public boolean isAlternativeMode() {
+        return alternativeMode;
+    }
+
+    public void setAlternativeMode(boolean alternativeMode) {
+        this.alternativeMode = alternativeMode;
+    }
+
+    @Override
+    public String toString() {
+        return "Link{" +
+                "shorthand='" + shorthand + '\'' +
+                ", alternativeMode=" + alternativeMode +
+                ", link='" + link + '\'' +
+                ", clickCount=" + clickCount +
+                '}';
     }
 }

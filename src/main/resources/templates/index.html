@@ -4,20 +4,47 @@
 <body>
     <div class="container">
         <h1>
-            <button class="sb sb1" th:UUID="${UUID1}" th:onclick="|window.location.href='/auth/' + this.getAttribute('UUID')|"></button>
-            <button class="sb sb2" th:UUID="${UUID2}" th:onclick="|window.location.href='/auth/' + this.getAttribute('UUID')|"></button>
+            <button class="sb sb1" th:UUID="${UUID1}" th:onclick="|postUUID(this.getAttribute('UUID'))|"></button>
+            <button class="sb sb2" th:UUID="${UUID2}" th:onclick="|postUUID(this.getAttribute('UUID'))|"></button>
             TGirl.click
         </h1>
         <p>Successfully served <span th:text="${totalClickCount}">0</span> pages!</p>
 
-        <form action="/" method="post">
+        <form action="/links" method="post">
             <input aria-label="link" type="url" name="link" placeholder="Enter your link here..." required>
+            <input aria-label="alternativeMode" th:if="${userSecretMode}" type="text" name="alternativeMode" th:value="${UUID4}" hidden>
             <br>
-            <div th:if="${userSecretMode}">
-                <button class="button" type="submit"><span>Special</span> Shorten Link</button>
-            </div>
             <button class="button" type="submit">Shorten Link</button>
+            <div th:if="${userSecretMode}">
+                <button class="button" type="submit"><span class="special">Special</span> Shorten Link</button>
+            </div>
         </form>
     </div>
+    <script>
+        function postUUID(uuid) {
+            fetch('/auth', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain'
+                },
+                body: uuid
+            }).then(() => {
+                window.location.reload();
+            });
+        }
+    </script>
+    <script th:if="${userSecretMode}">
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form[action="/links"]');
+            const normalButton = form.querySelector('button[type="submit"]:not(.special)');
+            const alternativeModeInput = form.querySelector('input[name="alternativeMode"]');
+            
+            if (normalButton && alternativeModeInput) {
+                normalButton.addEventListener('click', function(e) {
+                    alternativeModeInput.value = '';
+                });
+            }
+        });
+    </script>
 </body>
 </html>
