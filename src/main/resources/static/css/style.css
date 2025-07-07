@@ -24,6 +24,20 @@ body {
     width: 90%;
 }
 
+.heading-container {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: center;
+    gap: 1em;
+    margin-bottom: 20px;
+}
+
+.heading-container h1 {
+    position: relative;
+    display: inline-block;
+}
+
 .container.container-rough {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(15px);
@@ -70,23 +84,35 @@ p {
     height: 100%;
 }
 
+.icon-about {
+    width: 2em;
+    height: 2em;
+    color: #F5A9B8;
+}
+
+.icon-about:hover {
+    width: 2.2em;
+    height: 2.2em;
+}
+
 .sb {
     height: 5px;
-    width: 5px;
+    width: 1px;
     position:absolute;
+    box-sizing: unset;
     cursor: text;
-    background-color: #fff0;
+    background-color: #FFF0;
     border: none;
 }
 
 .sb1 {
-    top: 90px;
-    left: 205px;
+    top: 23px;
+    left: 64px;
 }
 
 .sb2 {
-    top: 112px;
-    left: 251px;
+    top: 44px;
+    left: 109px;
 }
 
 .sb3 {

@@ -14,6 +14,6 @@ public interface LinkRepository extends CrudRepository<Link, Long> {
 
     boolean existsByShorthand(String shorthand);
 
-    @Query("SELECT SUM(clickCount) FROM Link")
+    @Query("SELECT COALESCE(SUM(clickCount), 0) FROM Link")
     int sumClickCount();
 }

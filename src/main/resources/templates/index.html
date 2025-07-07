@@ -3,11 +3,16 @@
 <head th:replace="~{layout :: head}"></head>
 <body>
     <div class="container">
-        <h1>
-            <button class="sb sb1" th:UUID="${UUID1}" th:onclick="|postUUID(this.getAttribute('UUID'))|"></button>
-            <button class="sb sb2" th:UUID="${UUID2}" th:onclick="|postUUID(this.getAttribute('UUID'))|"></button>
-            TGirl.click
-        </h1>
+        <div class="heading-container">
+            <h1>
+                <button class="sb sb1" th:UUID="${UUID1}" th:onclick="|postUUID(this.getAttribute('UUID'))|"></button>
+                <button class="sb sb2" th:UUID="${UUID2}" th:onclick="|postUUID(this.getAttribute('UUID'))|"></button>
+                TGirl.click
+            </h1>
+            <a href="/about">
+                <img src="/images/info.svg" alt="about" class="icon-about">
+            </a>
+        </div>
         <p>Successfully served <span th:text="${totalClickCount}">0</span> pages!</p>
 
         <form action="/links" method="post">
@@ -40,7 +45,7 @@
             const alternativeModeInput = form.querySelector('input[name="alternativeMode"]');
             
             if (normalButton && alternativeModeInput) {
-                normalButton.addEventListener('click', function(e) {
+                normalButton.addEventListener('click', function() {
                     alternativeModeInput.value = '';
                 });
             }

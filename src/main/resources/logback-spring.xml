@@ -6,20 +6,13 @@
     <property resource="application.properties"/>
 
     <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>${logstash.destination}</destination>
+        <destination>127.0.0.1:5000</destination>
 
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <customFields>{"application":"gg.nya.tgirlclicker",
                             "version":"${application.version}",
                             "environment": "${spring.profiles.active}"}</customFields>
         </encoder>
-
-        <ssl>
-            <trustStore>
-                <location>classpath:certificates/truststore.jks</location>
-                <password>changeit</password>
-            </trustStore>
-        </ssl>
     </appender>
 
     <!-- Console appender for local development -->
