@@ -25,6 +25,16 @@
             </div>
         </form>
     </div>
+    <div th:if="${responseActive}" class="response">
+        <div class="link-created" th:if="${createdLink != null}">
+            <div>Your link has been successfully created.</div>
+            <div class="link-container" onclick="copyToClipboard(this.querySelector('.link').textContent)">
+                <span class="link" th:text="${createdLink}"></span>
+                <img src="/images/copy.svg" alt="copy" class="icon-copy">
+            </div>
+            <div>(Click to copy)</div>
+        </div>
+    </div>
     <script>
         function postUUID(uuid) {
             fetch('/auth', {
@@ -50,6 +60,11 @@
                 });
             }
         });
+    </script>
+    <script th:if="${createdLink != null}">
+        function copyToClipboard(link) {
+            navigator.clipboard.writeText(link);
+        }
     </script>
 </body>
 </html>

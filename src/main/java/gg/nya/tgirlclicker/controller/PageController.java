@@ -4,6 +4,7 @@ import gg.nya.tgirlclicker.controller.model.CreateLinkDto;
 import gg.nya.tgirlclicker.repository.Link;
 import gg.nya.tgirlclicker.service.LinkService;
 import gg.nya.tgirlclicker.session.UserSession;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
@@ -43,12 +45,17 @@ public class PageController {
             log.debug("index, user is in secret mode, serving UUID4");
             model.addAttribute("UUID4", userSession.getAuthorizeUUIDs().get(3));
         }
+        if(model.getAttribute("createdLink")  != null) {
+            log.debug("index, createdLink {} attribute found in model, setting response active", model.getAttribute("createdLink"));
+            model.addAttribute("responseActive", true);
+        }
         log.debug("index, main page was served with total click count: {}", totalClickCount);
         return "index";
     }
 
     @PostMapping("/links")
-    public String createLink(@Valid @ModelAttribute CreateLinkDto createLinkDto, BindingResult bindingResult) {
+    public String createLink(@Valid @ModelAttribute CreateLinkDto createLinkDto, BindingResult bindingResult,
+                             RedirectAttributes redirectAttributes, HttpServletRequest request) {
         log.info("createLink, request to create link: {}", createLinkDto);
         if (bindingResult.hasErrors()) {
             log.warn("createLink, validation errors: {}", bindingResult.getAllErrors());
@@ -62,6 +69,9 @@ public class PageController {
         }
         Link createdLink = linkService.createOrFindLink(createLinkDto.getLink(), alternativeMode);
         log.info("createLink, link created successfully: {}", createdLink);
+
+        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        redirectAttributes.addFlashAttribute("createdLink", baseUrl + "/" + createdLink.getShorthand());
         return "redirect:/";
     }
 

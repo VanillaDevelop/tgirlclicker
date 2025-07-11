@@ -20,8 +20,7 @@
     </div>
     <div class="qna">
         <strong>What is the retention policy of links?</strong>
-        At this time, links are stored indefinitely. However, links may be deleted without prior notice if they are deemed inappropriate or appear to be the result of spam.
-        Always store the original link in a safe place, as TGirl.click is not responsible for lost links.
+        At this time, links are stored indefinitely. But like please don't spam it or post illegal stuff.
     </div>
 
     <button class="button" onclick="window.location.href='/'">
@@ -36,7 +35,7 @@
                 'Content-Type': 'text/plain'
             },
             body: uuid
-        }).then(response => {
+        }).then(() => {
             window.location.reload();
         });
     }
