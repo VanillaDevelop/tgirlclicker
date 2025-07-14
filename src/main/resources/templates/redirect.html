@@ -15,10 +15,5 @@
     <div class="gg">GOOD GIRL</div>
 </div>
 </body>
-<script th:inline="javascript">
-    // Redirect to the main page after 1 second
-    setTimeout(function() {
-        window.location.href = [[${link}]];
-    }, 1000);
-</script>
+<meta th:content="'1;url=' + ${link}" http-equiv="refresh">
 </html>

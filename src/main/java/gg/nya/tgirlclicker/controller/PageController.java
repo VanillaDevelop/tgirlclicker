@@ -95,8 +95,16 @@ public class PageController {
                 resolvedLink.get().getShorthand(),
                 resolvedLink.get().getLink());
 
-        model.addAttribute("link", resolvedLink.get().getLink());
-        return "redirect";
+        if(resolvedLink.get().isAlternativeMode())
+        {
+            log.debug("redirectToLink, alternative mode enabled for link resolution for shorthand: {}", shorthand);
+            model.addAttribute("link", resolvedLink.get().getLink());
+            return "redirect";
+        }
+        else {
+            log.debug("redirectToLink, redirecting directly for shorthand: {}", shorthand);
+            return "redirect:" + resolvedLink.get().getLink();
+        }
     }
 
     @GetMapping("/about")
