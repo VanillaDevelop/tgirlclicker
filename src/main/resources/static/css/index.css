@@ -1,0 +1,45 @@
+.response {
+    background: linear-gradient(135deg, rgba(245, 169, 184, 0.15), rgba(91, 206, 250, 0.15));
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: none;
+    padding: 20px;
+    border-radius: 16px 16px 0 0;
+    position: fixed;
+    bottom: 0;
+    transform: translateX(-50%);
+    left: 50%;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 -8px 32px rgba(31, 38, 135, 0.15);
+    animation: slideUpFade 0.5s ease-out;
+    color: white;
+    text-shadow: 0 0 8px rgba(61, 81, 153, 0.8);
+    text-align: center;
+}
+
+.link-container {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 5px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.error-message {
+    font-weight: bold;
+}
+
+.link-created {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.link-container .link {
+    font-weight: bold;
+    text-decoration: underline white;
+}
