@@ -54,6 +54,9 @@ body {
     max-width: 450px;
     box-shadow: 0 -8px 32px rgba(31, 38, 135, 0.15);
     animation: slideUpFade 0.5s ease-out;
+    color: white;
+    text-shadow: 0 0 8px rgba(61, 81, 153, 0.8);
+    text-align: center;
 }
 
 .link-container {
@@ -67,10 +70,8 @@ body {
     user-select: none;
 }
 
-
-.link-created div {
-    color: white;
-    text-shadow: 0 0 8px rgba(61, 81, 153, 0.8);
+.error-message {
+    font-weight: bold;
 }
 
 .link-created {
@@ -80,14 +81,8 @@ body {
 }
 
 .link-container .link {
-    color: white;
     font-weight: bold;
     text-decoration: underline white;
-    text-shadow: 0 0 8px rgba(61, 81, 153, 0.8);
-}
-
-.link-container svg path {
-    stroke: white;
 }
 
 .container.container-rough {

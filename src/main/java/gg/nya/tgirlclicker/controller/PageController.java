@@ -45,10 +45,6 @@ public class PageController {
             log.debug("index, user is in secret mode, serving UUID4");
             model.addAttribute("UUID4", userSession.getAuthorizeUUIDs().get(3));
         }
-        if(model.getAttribute("createdLink")  != null) {
-            log.debug("index, createdLink {} attribute found in model, setting response active", model.getAttribute("createdLink"));
-            model.addAttribute("responseActive", true);
-        }
         log.debug("index, main page was served with total click count: {}", totalClickCount);
         return "index";
     }
@@ -56,7 +52,11 @@ public class PageController {
     @PostMapping("/links")
     public String createLink(@Valid @ModelAttribute CreateLinkDto createLinkDto, BindingResult bindingResult,
                              RedirectAttributes redirectAttributes, HttpServletRequest request) {
-        log.info("createLink, request to create link: {}", createLinkDto);
+        String clientIp = getClientIpAddress(request);
+        String userAgent = request.getHeader("User-Agent") != null ? request.getHeader("User-Agent") : "Unknown";
+
+        log.info("createLink, request to create link: {} from IP: {} with User-Agent: {}", 
+                createLinkDto, clientIp, userAgent);
         if (bindingResult.hasErrors()) {
             log.warn("createLink, validation errors: {}", bindingResult.getAllErrors());
             return "redirect:/";
@@ -67,11 +67,17 @@ public class PageController {
             alternativeMode = true;
             log.debug("createLink, alternative mode enabled for link creation");
         }
-        Link createdLink = linkService.createOrFindLink(createLinkDto.getLink(), alternativeMode);
-        log.info("createLink, link created successfully: {}", createdLink);
+        Optional<Link> createdLink = linkService.createOrFindLink(createLinkDto.getLink(), alternativeMode, clientIp, userAgent);
 
-        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        redirectAttributes.addFlashAttribute("createdLink", baseUrl + "/" + createdLink.getShorthand());
+        if(createdLink.isPresent()) {
+            log.info("createLink, link created successfully: {}", createdLink);
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+            redirectAttributes.addFlashAttribute("createdLink", baseUrl + "/" + createdLink.get().getShorthand());
+        }
+        else {
+            log.warn("createLink, could not create link, redirecting to index");
+            redirectAttributes.addFlashAttribute("errorMessage", "You cannot create another link at this time.");
+        }
         return "redirect:/";
     }
 
@@ -112,5 +118,17 @@ public class PageController {
         model.addAttribute("UUID3", userSession.getAuthorizeUUIDs().get(2));
         log.debug("about, about page was served");
         return "about";
+    }
+
+    private String getClientIpAddress(HttpServletRequest request) {
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
+            return xForwardedFor.split(",")[0].trim();
+        }
+        String xRealIp = request.getHeader("X-Real-IP");
+        if (xRealIp != null && !xRealIp.isEmpty()) {
+            return xRealIp;
+        }
+        return request.getRemoteAddr();
     }
 }

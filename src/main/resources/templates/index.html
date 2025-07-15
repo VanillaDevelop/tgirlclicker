@@ -25,7 +25,7 @@
             </div>
         </form>
     </div>
-    <div th:if="${responseActive}" class="response">
+    <div th:if="${createdLink != null || errorMessage != null}" class="response">
         <div class="link-created" th:if="${createdLink != null}">
             <div>Your link has been successfully created.</div>
             <div class="link-container" onclick="copyToClipboard(this.querySelector('.link').textContent)">
@@ -33,6 +33,9 @@
                 <img src="/images/copy.svg" alt="copy" class="icon-copy">
             </div>
             <div>(Click to copy)</div>
+        </div>
+        <div class="error-message" th:if="${errorMessage != null}">
+            <div th:text="${errorMessage}"></div>
         </div>
     </div>
     <script>

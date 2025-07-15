@@ -2,6 +2,8 @@ package gg.nya.tgirlclicker.repository;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "links")
 public class Link {
@@ -20,13 +22,26 @@ public class Link {
     
     @Column(nullable = false)
     private int clickCount = 0;
+
+    @Column(nullable = false)
+    private String clientIp;
+
+    @Column(nullable = false)
+    private String userAgent;
+
+    @Column(nullable = false)
+    private Date createdDate;
+
     
     public Link() {}
     
-    public Link(String link, boolean alternativeMode, String shorthand) {
+    public Link(String link, boolean alternativeMode, String shorthand, String clientIp, String userAgent) {
         this.link = link;
         this.alternativeMode = alternativeMode;
         this.shorthand = shorthand;
+        this.clientIp = clientIp;
+        this.userAgent = userAgent;
+        this.createdDate = new Date();
     }
     
     public Long getId() {
@@ -81,5 +96,29 @@ public class Link {
                 ", link='" + link + '\'' +
                 ", clickCount=" + clickCount +
                 '}';
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public void setUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 }
