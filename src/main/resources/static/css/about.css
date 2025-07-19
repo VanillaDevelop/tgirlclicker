@@ -1,16 +1,16 @@
 .container.container-rough {
-    background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.8);
     border: 3px solid rgba(245, 169, 184, 0.6);
 }
 
 .qna {
+    align-items: start;
+    color: #da4d6a;
     display: flex;
     flex-direction: column;
-    align-items: start;
-    margin-block: 1em;
     font-family: "Readex Pro", sans-serif;
-    color: #da4d6a;
+    margin-block: 1em;
     text-align: left;
 }
 

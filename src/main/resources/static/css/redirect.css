@@ -1,28 +1,28 @@
 .gg-container {
+    align-items: center;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
     height: 100%;
+    justify-content: space-around;
 }
 
 .gg {
-    font-size: 15vh;
+    animation: ggFlash 0.9s ease-in-out;
     font-family: "Readex Pro", sans-serif;
-    text-shadow: 0 0 12px white, 3px 3px 6px white, -3px -3px 6px white, 3px -3px 6px white, -3px 3px 6px white;
+    font-size: 15vh;
     opacity: 0;
-    animation: ggFlash 0.9s ease-in-out
+    text-shadow: 0 0 12px white, 3px 3px 6px white, -3px -3px 6px white, 3px -3px 6px white, -3px 3px 6px white;
 }
 
 .heart {
-    width: min(10vw, 10vh);
-    height: min(10vw, 10vh);
+    animation: heartFloat 1s ease-in-out;
     border: 2em solid;
     border-image: radial-gradient(#fff 69%, #0000 70%) 84.5%/50%;
     clip-path: polygon(-41% 0, 50% 91%, 141% 0);
-    position: absolute;
+    height: min(10vw, 10vh);
     opacity: 0;
-    animation: heartFloat 1s ease-in-out;
+    position: absolute;
+    width: min(10vw, 10vh);
 }
 
 @media (max-width: 1000px) {
@@ -31,54 +31,42 @@
     }
 }
 
-.gg:nth-child(1) {
+.gg:nth-child(odd) {
     color: #F5A9B8;
 }
 
-.gg:nth-child(2) {
+.gg:nth-child(even) {
     color: #5BCEFA;
-}
-
-.gg:nth-child(3) {
-    color: #F5A9B8;
-}
-
-.gg:nth-child(4) {
-    color: #5BCEFA;
-}
-
-.gg:nth-child(5) {
-    color: #F5A9B8;
 }
 
 .heart:nth-child(1) {
-    top: 20%;
-    left: 12%;
     animation-delay: 0s;
+    left: 12%;
+    top: 20%;
 }
 
 .heart:nth-child(2) {
-    top: 30%;
-    right: 18%;
     animation-delay: 0.1s;
+    right: 18%;
+    top: 30%;
 }
 
 .heart:nth-child(3) {
-    top: 60%;
-    left: 20%;
     animation-delay: 0.2s;
+    left: 20%;
+    top: 60%;
 }
 
 .heart:nth-child(4) {
-    top: 70%;
-    right: 12%;
     animation-delay: 0.3s;
+    right: 12%;
+    top: 70%;
 }
 
 .heart:nth-child(5) {
-    top: 80%;
-    left: 8%;
     animation-delay: 0.4s;
+    left: 8%;
+    top: 80%;
 }
 
 @keyframes heartFloat {
@@ -95,25 +83,11 @@
     }
 }
 
-.gg:nth-child(1) {
-    animation-delay: 0s;
-}
-
-.gg:nth-child(2) {
-    animation-delay: 0.32s;
-}
-
-.gg:nth-child(3) {
-    animation-delay: 0.16s;
-}
-
-.gg:nth-child(4) {
-    animation-delay: 0.24s;
-}
-
-.gg:nth-child(5) {
-    animation-delay: 0.08s;
-}
+.gg:nth-child(1) { animation-delay: 0s; }
+.gg:nth-child(2) { animation-delay: 0.32s; }
+.gg:nth-child(3) { animation-delay: 0.16s; }
+.gg:nth-child(4) { animation-delay: 0.24s; }
+.gg:nth-child(5) { animation-delay: 0.08s; }
 
 @keyframes ggFlash {
     0% {

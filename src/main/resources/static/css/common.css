@@ -1,112 +1,111 @@
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Readex+Pro');
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Readex+Pro&display=swap');
 
 body {
-    margin: 0;
-    padding: 0;
+    align-items: center;
     background: linear-gradient(#5BCEFA 0 19%, #F5A9B8 21% 39%, #ffffff 41% 59%, #F5A9B8 61% 79%, #5BCEFA 81% 100%);
+    display: flex;
     font-family: Arial, sans-serif;
     height: 100vh;
-    display: flex;
-    align-items: center;
     justify-content: center;
+    margin: 0;
+    padding: 0;
 }
 
 .container {
-    background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.1);
     border: 3px solid rgba(255, 255, 255, 0.2);
-    padding: 40px;
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-    text-align: center;
     max-width: 400px;
+    padding: 40px;
+    text-align: center;
     width: 90%;
 }
 
 .heading-container {
+    align-items: center;
     display: flex;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
     gap: 1em;
+    justify-content: center;
     margin-bottom: 20px;
 }
 
 .heading-container h1 {
-    position: relative;
     display: inline-block;
     margin: 0;
-}
-
-.special {
-    font-family: "Pacifico", cursive;
-    color: #F5A9B8;
-    text-shadow: 0 0 4px white, 1px 1px 2px white;
+    position: relative;
 }
 
 h1 {
     color: #F5A9B8;
-    font-size: 2.5em;
     font-family: "Pacifico", cursive;
+    font-size: 2.5em;
     text-shadow: 0 0 8px white, 2px 2px 4px white, -2px -2px 4px white, 2px -2px 4px white, -2px 2px 4px white;
 }
 
+.special {
+    color: #F5A9B8;
+    font-family: "Pacifico", cursive;
+    text-shadow: 0 0 4px white, 1px 1px 2px white;
+}
+
 p {
-    margin-top: 10px;
     color: #B75E6F;
     font-size: 1.2em;
-    text-shadow: 0 0 4px white, 1px 1px 2px white;
     font-weight: 500;
+    margin-top: 10px;
+    text-shadow: 0 0 4px white, 1px 1px 2px white;
 }
 
 .icon-about {
-    width: 2em;
-    height: 2em;
     color: #F5A9B8;
+    height: 2em;
     transition: 0.2s ease-in-out;
+    width: 2em;
 }
 
 .icon-about:hover {
-    width: 2.5em;
     height: 2.5em;
+    width: 2.5em;
 }
 
 .sb {
-    height: 5px;
-    width: 1px;
-    position:absolute;
-    box-sizing: unset;
-    cursor: text;
     background-color: #FFF0;
     border: none;
+    box-sizing: unset;
+    cursor: text;
+    height: 5px;
+    position: absolute;
+    width: 1px;
 }
 
 .sb1 {
-    top: 23px;
     left: 64px;
+    top: 23px;
 }
 
 .sb2 {
-    top: 44px;
     left: 109px;
+    top: 44px;
 }
 
 .sb3 {
-    top: 90px;
     left: 351px;
+    top: 90px;
 }
 
 
 input {
-    width: 100%;
-    padding: 15px;
     border: 3px solid #F5A9B8;
     border-radius: 10px;
+    box-sizing: border-box;
     font-size: 16px;
     margin-bottom: 20px;
-    box-sizing: border-box;
     outline: none;
+    padding: 15px;
+    width: 100%;
 }
 
 input:focus {
@@ -114,17 +113,17 @@ input:focus {
 }
 
 .button {
-    font-weight: bold;
-    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.7);
     border: 2px solid rgba(245, 169, 184, 0.6);
-    color: #F5A9B8;
-    padding: 15px 30px;
-    font-size: 18px;
     border-radius: 10px;
+    color: #F5A9B8;
     cursor: pointer;
-    transition: transform 0.2s;
+    font-size: 18px;
+    font-weight: bold;
     margin-bottom: 0.5em;
+    padding: 15px 30px;
+    transition: transform 0.2s;
     width: 100%;
 }
 
