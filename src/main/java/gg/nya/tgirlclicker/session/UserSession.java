@@ -46,7 +46,7 @@ public class UserSession implements Serializable {
      * @param uuid the UUID to authorize
      */
     public void authorize(UUID uuid) {
-        log.info("authorize, user authorization request with UUID: {}", uuid);
+        log.debug("authorize, user authorization request with UUID: {}", uuid);
         boolean success = this.remainingUUIDs.remove(uuid);
         log.debug("authorize, success: {}, remaining UUID count: {}", success, this.remainingUUIDs.size());
 
