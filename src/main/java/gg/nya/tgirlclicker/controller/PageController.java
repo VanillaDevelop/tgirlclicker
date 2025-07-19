@@ -141,7 +141,7 @@ public class PageController {
      * @return Directly redirects to the link in normal mode. Opens the redirect view in alternative mode. Redirects
      * to the index page if the link is not found.
      */
-    @GetMapping("/{shorthand}")
+    @GetMapping("/{shorthand:[^.]*}")
     public String redirectToLink(@PathVariable String shorthand, Model model) {
         log.info("redirectToLink, request to resolve shorthand: {}", shorthand);
 

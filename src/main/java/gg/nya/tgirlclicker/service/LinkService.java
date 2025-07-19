@@ -5,6 +5,7 @@ import gg.nya.tgirlclicker.repository.LinkRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -87,12 +88,13 @@ public class LinkService {
      * Returns the total number of clicks across all links.
      * @return the total click count
      */
+    @Cacheable(value = "totalClickCount", cacheManager = "cacheManager")
     public int getTotalClickCount() {
         log.debug("getTotalClickCount, retrieving total click count from repository");
 
         int totalClickCount = linkRepository.sumClickCount();
         log.debug("getTotalClickCount, returning total click count: {}", totalClickCount);
-        return linkRepository.sumClickCount();
+        return totalClickCount;
     }
 
     /**
