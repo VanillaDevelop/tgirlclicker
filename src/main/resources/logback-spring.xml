@@ -3,15 +3,17 @@
 
 <configuration scan="true">
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
-    <property resource="application.properties"/>
+    <springProperty scope="context" name="ACTIVE_PROFILE" source="spring.profiles.active"/>
+    <springProperty scope="context" name="APP_VERSION" source="spring.application.version"/>
+
 
     <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>127.0.0.1:5000</destination>
 
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <customFields>{"application":"gg.nya.tgirlclicker",
-                            "version":"${application.version}",
-                            "environment": "${spring.profiles.active}"}</customFields>
+                            "version":"${APP_VERSION}",
+                            "environment": "${ACTIVE_PROFILE}"}</customFields>
         </encoder>
     </appender>
 
