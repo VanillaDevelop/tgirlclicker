@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +22,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
 
+/**
+ * PageController handles the main web pages and link creation logic.
+ * It serves the index page, processes link creation, and redirects to links.
+ */
 @Controller
 public class PageController {
     private static final Logger log = LoggerFactory.getLogger(PageController.class);
@@ -34,45 +39,81 @@ public class PageController {
         this.userSession = userSession;
     }
 
+    /**
+     * Serves the main index page with total click count and user session information.
+     *
+     * @param model Attribute model for the view.
+     * @param request The HTTP request to extract client information.
+     * @return Returns the index view with model attributes.
+     */
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, HttpServletRequest request) {
+        MDC.put("clientIp", getClientIpAddress(request));
+        MDC.put("userAgent", getUserAgent(request));
+        log.info("index, request to serve main page");
+
         int totalClickCount = linkService.getTotalClickCount();
         model.addAttribute("totalClickCount", totalClickCount);
         model.addAttribute("UUID1", userSession.getAuthorizeUUIDs().get(0));
         model.addAttribute("UUID2", userSession.getAuthorizeUUIDs().get(1));
         model.addAttribute("userSecretMode", userSession.isSecretMode());
         if (userSession.isSecretMode()) {
-            log.debug("index, user is in secret mode, serving UUID4");
+            // If the user is in secret mode, show the UUID that needs to be POSTed to authorize the alternative mode
             model.addAttribute("UUID4", userSession.getAuthorizeUUIDs().get(3));
         }
-        log.debug("index, main page was served with total click count: {}", totalClickCount);
+
+        log.debug("index, main page was served with total click count: {}, secret mode: {}",
+                totalClickCount, userSession.isSecretMode());
+
+        MDC.clear();
         return "index";
     }
 
+    /**
+     * POST request that handles the creation of a new link.
+     * @param createLinkDto The DTO containing the link information to be created.
+     * @param bindingResult BindingResult to capture validation errors.
+     * @param redirectAttributes RedirectAttributes to pass attributes to the redirect.
+     * @param request The HTTP request to extract client information.
+     * @return Redirects to the index page with a flash attribute indicating the created link or an error message.
+     */
     @PostMapping("/links")
     public String createLink(@Valid @ModelAttribute CreateLinkDto createLinkDto, BindingResult bindingResult,
                              RedirectAttributes redirectAttributes, HttpServletRequest request) {
         String clientIp = getClientIpAddress(request);
-        String userAgent = request.getHeader("User-Agent") != null ? request.getHeader("User-Agent") : "Unknown";
+        String userAgent = getUserAgent(request);
+        MDC.put("clientIp", clientIp);
+        MDC.put("userAgent", userAgent);
+        log.info("createLink, request to create link: {}", createLinkDto);
 
-        log.info("createLink, request to create link: {} from IP: {} with User-Agent: {}", 
-                createLinkDto, clientIp, userAgent);
         if (bindingResult.hasErrors()) {
             log.warn("createLink, validation errors: {}", bindingResult.getAllErrors());
+            redirectAttributes.addFlashAttribute("errorMessage", "Invalid link format. Please try again.");
             return "redirect:/";
         }
+
         boolean alternativeMode = false;
-        if (userSession.isSecretMode() && createLinkDto.getAlternativeMode() != null
-                && createLinkDto.getAlternativeMode().equals(userSession.getAuthorizeUUIDs().get(3))) {
-            alternativeMode = true;
-            log.debug("createLink, alternative mode enabled for link creation");
+        if (createLinkDto.getAlternativeMode() != null) {
+            if (!userSession.isSecretMode()) {
+                log.warn("createLink, alternative mode requested but user is not in secret mode, so request is ignored.");
+            }
+            else if (!userSession.getAuthorizeUUIDs().get(3).equals(createLinkDto.getAlternativeMode())) {
+                log.warn("createLink, alternative mode requested but UUID does not match expected, so request is ignored.");
+            }
+            else {
+                log.debug("createLink, alternative mode requested and UUID matches, enabling alternative mode for link creation");
+                alternativeMode = true;
+            }
         }
+
+        log.debug("createLink, creating {}, alternative mode {}, IP {}, User-Agent: {}",
+                createLinkDto.getLink(), alternativeMode, clientIp, userAgent);
         Optional<Link> createdLink = linkService.createOrFindLink(createLinkDto.getLink(), alternativeMode, clientIp, userAgent);
 
         if(createdLink.isPresent()) {
-            log.info("createLink, link created successfully: {}", createdLink);
-            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-            redirectAttributes.addFlashAttribute("createdLink", baseUrl + "/" + createdLink.get().getShorthand());
+            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/" + createdLink.get().getShorthand();
+            redirectAttributes.addFlashAttribute("createdLink", baseUrl);
+            log.debug("createLink, link object created successfully: {}; Returning {}", createdLink, baseUrl);
         }
         else {
             log.warn("createLink, could not create link, redirecting to index");
@@ -81,9 +122,14 @@ public class PageController {
         return "redirect:/";
     }
 
+    /**
+     * Handles a user's request to unlock the secret mode.
+     * @param UUID The UUID to authorize the user session.
+     * @return Redirects to the index page after authorization, whether successful or not.
+     */
     @PostMapping("/auth")
     public String auth(@RequestBody String UUID) {
-        log.debug("auth, user authorization request with UUID: {}", UUID);
+        log.info("auth, user authorization request with UUID: {}", UUID);
         userSession.authorize(java.util.UUID.fromString(UUID));
         return "redirect:/";
     }
@@ -112,6 +158,12 @@ public class PageController {
             return "redirect:" + resolvedLink.get().getLink();
         }
     }
+
+    private static String getUserAgent(HttpServletRequest request) {
+        return request.getHeader("User-Agent") != null ? request.getHeader("User-Agent") : "Unknown";
+    }
+
+
 
     @GetMapping("/about")
     public String about(Model model) {
