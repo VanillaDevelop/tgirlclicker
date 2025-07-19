@@ -85,7 +85,7 @@ Type=simple
 WorkingDirectory=/opt/tgirlclicker
 User=deploy
 EnvironmentFile=/opt/tgirlclicker/.env
-ExecStart=/usr/bin/java -jar /opt/tgirlclicker/tgirlclicker.jar --spring.profiles.active=prod
+ExecStart=/usr/bin/java -jar /opt/tgirlclicker/tgirlclicker.jar
 Restart=always
 RestartSec=10
 

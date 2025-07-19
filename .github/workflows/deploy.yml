@@ -60,6 +60,7 @@ jobs:
           $SSH_CMD "echo 'DATABASE_URL=${{ secrets.DATABASE_URL }}' > /opt/$APP_NAME/.env"
           $SSH_CMD "echo 'DB_USERNAME=${{ secrets.DB_USERNAME }}' >> /opt/$APP_NAME/.env"
           $SSH_CMD "echo 'DB_PASSWORD=${{ secrets.DB_PASSWORD }}' >> /opt/$APP_NAME/.env"
+          $SSH_CMD "echo 'SPRING_PROFILES_ACTIVE=prod' >> /opt/$APP_NAME/.env"
           $SSH_CMD "chmod 600 /opt/$APP_NAME/.env"
           
           # Restart the application
