@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,6 +33,9 @@ public class PageController {
 
     private final LinkService linkService;
     private final UserSession userSession;
+    
+    @Value("${spring.profiles.active:default}")
+    private String activeProfile;
 
     @Autowired
     public PageController(LinkService linkService, UserSession userSession) {
@@ -105,7 +109,7 @@ public class PageController {
                 MDC.get("clientIp"), MDC.get("userAgent"));
 
         if(createdLink.isPresent()) {
-            String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/" + createdLink.get().getShorthand();
+            String baseUrl = buildLinkUrl(request, createdLink.get().getShorthand());
             redirectAttributes.addFlashAttribute("createdLink", baseUrl);
             log.debug("createLink, link object created successfully: {}; Returning {}", createdLink, baseUrl);
         }
@@ -175,5 +179,22 @@ public class PageController {
         model.addAttribute("UUID3", userSession.getAuthorizeUUIDs().get(2));
         log.debug("about, about page was served");
         return "about";
+    }
+
+    /**
+     * Builds the appropriate URL for a link based on the active profile.
+     * In production, returns clean HTTPS URLs without port.
+     * In development, returns full URLs with scheme and port for debugging.
+     * 
+     * @param request The HTTP request to extract server information.
+     * @param shorthand The shorthand identifier for the link.
+     * @return The complete URL for the shortened link.
+     */
+    private String buildLinkUrl(HttpServletRequest request, String shorthand) {
+        if ("prod".equals(activeProfile)) {
+            return "https://" + request.getServerName() + "/" + shorthand;
+        } else {
+            return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/" + shorthand;
+        }
     }
 }
