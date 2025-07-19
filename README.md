@@ -99,3 +99,5 @@ systemctl --user daemon-reload
 systemctl --user enable tgirlclicker.service
 systemctl --user start tgirlclicker.service
 ```
+
+The application runs on port 8090 by default.
