@@ -46,3 +46,56 @@ Set environment variables as defined in `application-prod.properties`:
 | `DATABASE_URL` | Connection String for the database |
 | `DB_USERNAME`  | Username for the database          |
 | `DB_PASSWORD`  | Password for the database          |
+
+The GitHub Actions workflow additionally requires the following parameters be set:
+
+| Variable Name           | Type      | Description                           |
+|-------------------------|-----------|---------------------------------------|
+| `SSH_PRIVATE_KEY`       | Secret    | Private SSH key for deployment        |
+| `SSH_IP_ADDRESS`        | Secret    | IP address of the server to deploy to |
+| `SSH_PORT`              | Secret    | Known hosts file for SSH              |
+| `SSH_SERVER_PUBLIC_KEY` | Variables | Public key of the server for SSH      |
+
+The workflow expects some legwork to be done on the server beforehand:
+
+- As application is not dockerized, Java must be set up (e.g. OpenJDK 17)
+- deploy user must be set up with SSH access and user lingering
+- PostgreSQL must be set up with a database and user matching the environment variables
+- Logstash must be set up to accept TCP connections on the port defined in `logback-spring.xml` on the local server
+
+Then set up the directory for the application: 
+```bash
+mkdir -p /opt/tgirlclicker
+chown deploy:deploy /opt/tgirlclicker
+```
+
+Set up the systemd user service:
+```bash
+mkdir -p home/deploy/.config/systemd.user
+```
+
+Create the file `home/deploy/.config/systemd.user/tgirlclicker.service` with the following content:
+```ini
+[Unit]
+Description=TGirl.click Web-App
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/tgirlclicker
+User=deploy
+EnvironmentFile=/opt/tgirlclicker/.env
+ExecStart=/usr/bin/java -jar /opt/tgirlclicker/tgirlclicker.jar --spring.profiles.active=prod
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target
+```
+
+Then enable and start the service:
+```bash
+systemctl --user daemon-reload
+systemctl --user enable tgirlclicker.service
+systemctl --user start tgirlclicker.service
+```

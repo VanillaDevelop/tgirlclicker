@@ -1,0 +1,69 @@
+name: Deploy Spring Boot App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Grant execute permission for Gradle wrapper
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+
+      - name: Deploy to Server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_IP_ADDRESS: ${{ secrets.SSH_IP_ADDRESS }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_SERVER_PUBLIC_KEY: ${{ vars.SSH_SERVER_PUBLIC_KEY }}
+          APP_NAME: "tgirlclicker"
+        run: |
+          # Set up SSH
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          echo "$SSH_IP_ADDRESS $SSH_SERVER_PUBLIC_KEY" >> ~/.ssh/known_hosts
+          
+          SSH_CMD="ssh -p $SSH_PORT deploy@${SSH_IP_ADDRESS}"
+
+          # Stop the current application
+          $SSH_CMD "systemctl --user stop $APP_NAME"
+          
+          JAR_FILE=$(ls build/libs/${APP_NAME}-*.jar | grep -v plain | head -n 1)
+          echo "Deploying: $JAR_FILE"
+
+          if [ -f "$JAR_FILE" ]; then
+          scp -P $SSH_PORT -i ~/.ssh/id_ed25519 "$JAR_FILE" deploy@${SSH_IP_ADDRESS}:/opt/${APP_NAME}/${APP_NAME}-new.jar
+          ssh -p $SSH_PORT -i ~/.ssh/id_ed25519 deploy@${SSH_IP_ADDRESS} "mv /opt/${APP_NAME}/${APP_NAME}-new.jar /opt/${APP_NAME}/${APP_NAME}.jar"
+          else
+          echo "ERROR: No valid JAR file found!"
+          exit 1
+          fi
+          
+          # Set up secrets
+          $SSH_CMD "echo 'DATABASE_URL=${{ secrets.DATABASE_URL }}' > /opt/$APP_NAME/.env"
+          $SSH_CMD "echo 'DB_USERNAME=${{ secrets.DB_USERNAME }}' >> /opt/$APP_NAME/.env"
+          $SSH_CMD "echo 'DB_PASSWORD=${{ secrets.DB_PASSWORD }}' >> /opt/$APP_NAME/.env"
+          $SSH_CMD "chmod 600 /opt/$APP_NAME/.env"
+          
+          # Restart the application
+          $SSH_CMD "systemctl --user start $APP_NAME"
+          
+          # Clean up old builds
+          $SSH_CMD "find /opt/$APP_NAME -type f -name '*.jar' -mtime +30 -delete"
