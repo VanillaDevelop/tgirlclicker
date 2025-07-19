@@ -4,35 +4,64 @@ import jakarta.persistence.*;
 
 import java.util.Date;
 
+/**
+ * Represents a link in the database.
+ * Each link has a shorthand, an alternative mode flag, the actual link,
+ * a click count, client IP, user agent, and a creation date.
+ */
 @Entity
 @Table(name = "links")
 public class Link {
+    /**
+     * Unique identifier for the link.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * The shorthand via which the link can be accessed.
+     */
     @Column(nullable = false)
     private String shorthand;
 
+    /**
+     * Flag indicating if the link is in alternative mode.
+     * Alternative mode will display the redirect page before redirecting to the link.
+     */
     @Column(nullable = false)
     private boolean alternativeMode = false;
-    
+
+    /**
+     * The actual link that the shorthand points to.
+     */
     @Column(nullable = false)
     private String link;
-    
+
+    /**
+     * The number of times the link has been requested.
+     */
     @Column(nullable = false)
     private int clickCount = 0;
 
+    /**
+     * The IP address of the client that created the link.
+     */
     @Column(nullable = false)
     private String clientIp;
 
+    /**
+     * The user agent of the client that created the link.
+     */
     @Column(nullable = false)
     private String userAgent;
 
+    /**
+     * The date when the link was created.
+     */
     @Column(nullable = false)
     private Date createdDate;
 
-    
     public Link() {}
     
     public Link(String link, boolean alternativeMode, String shorthand, String clientIp, String userAgent) {
@@ -67,10 +96,6 @@ public class Link {
     public void setClickCount(int clickCount) {
         this.clickCount = clickCount;
     }
-    
-    public void incrementClickCount() {
-        this.clickCount++;
-    }
 
     public String getShorthand() {
         return shorthand;
@@ -86,16 +111,6 @@ public class Link {
 
     public void setAlternativeMode(boolean alternativeMode) {
         this.alternativeMode = alternativeMode;
-    }
-
-    @Override
-    public String toString() {
-        return "Link{" +
-                "shorthand='" + shorthand + '\'' +
-                ", alternativeMode=" + alternativeMode +
-                ", link='" + link + '\'' +
-                ", clickCount=" + clickCount +
-                '}';
     }
 
     public String getClientIp() {
@@ -120,5 +135,15 @@ public class Link {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Link{" +
+                "shorthand='" + shorthand + '\'' +
+                ", alternativeMode=" + alternativeMode +
+                ", link='" + link + '\'' +
+                ", clickCount=" + clickCount +
+                '}';
     }
 }

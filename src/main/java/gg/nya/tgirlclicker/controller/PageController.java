@@ -43,13 +43,10 @@ public class PageController {
      * Serves the main index page with total click count and user session information.
      *
      * @param model Attribute model for the view.
-     * @param request The HTTP request to extract client information.
      * @return Returns the index view with model attributes.
      */
     @GetMapping("/")
-    public String index(Model model, HttpServletRequest request) {
-        MDC.put("clientIp", getClientIpAddress(request));
-        MDC.put("userAgent", getUserAgent(request));
+    public String index(Model model) {
         log.info("index, request to serve main page");
 
         int totalClickCount = linkService.getTotalClickCount();
@@ -65,7 +62,6 @@ public class PageController {
         log.debug("index, main page was served with total click count: {}, secret mode: {}",
                 totalClickCount, userSession.isSecretMode());
 
-        MDC.clear();
         return "index";
     }
 
@@ -80,15 +76,12 @@ public class PageController {
     @PostMapping("/links")
     public String createLink(@Valid @ModelAttribute CreateLinkDto createLinkDto, BindingResult bindingResult,
                              RedirectAttributes redirectAttributes, HttpServletRequest request) {
-        String clientIp = getClientIpAddress(request);
-        String userAgent = getUserAgent(request);
-        MDC.put("clientIp", clientIp);
-        MDC.put("userAgent", userAgent);
         log.info("createLink, request to create link: {}", createLinkDto);
 
         if (bindingResult.hasErrors()) {
             log.warn("createLink, validation errors: {}", bindingResult.getAllErrors());
             redirectAttributes.addFlashAttribute("errorMessage", "Invalid link format. Please try again.");
+
             return "redirect:/";
         }
 
@@ -107,8 +100,9 @@ public class PageController {
         }
 
         log.debug("createLink, creating {}, alternative mode {}, IP {}, User-Agent: {}",
-                createLinkDto.getLink(), alternativeMode, clientIp, userAgent);
-        Optional<Link> createdLink = linkService.createOrFindLink(createLinkDto.getLink(), alternativeMode, clientIp, userAgent);
+                createLinkDto.getLink(), alternativeMode, MDC.get("clientIp"), MDC.get("userAgent"));
+        Optional<Link> createdLink = linkService.createOrFindLink(createLinkDto.getLink(), alternativeMode,
+                MDC.get("clientIp"), MDC.get("userAgent"));
 
         if(createdLink.isPresent()) {
             String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/" + createdLink.get().getShorthand();
@@ -119,6 +113,7 @@ public class PageController {
             log.warn("createLink, could not create link, redirecting to index");
             redirectAttributes.addFlashAttribute("errorMessage", "You cannot create another link at this time.");
         }
+
         return "redirect:/";
     }
 
@@ -131,19 +126,28 @@ public class PageController {
     public String auth(@RequestBody String UUID) {
         log.info("auth, user authorization request with UUID: {}", UUID);
         userSession.authorize(java.util.UUID.fromString(UUID));
+
         return "redirect:/";
     }
 
+    /**
+     * Handles the redirection to a link based on its shorthand.
+     * @param shorthand The shorthand identifier for the link.
+     * @param model Model to add attributes for the view.
+     * @return Directly redirects to the link in normal mode. Opens the redirect view in alternative mode. Redirects
+     * to the index page if the link is not found.
+     */
     @GetMapping("/{shorthand}")
     public String redirectToLink(@PathVariable String shorthand, Model model) {
         log.info("redirectToLink, request to resolve shorthand: {}", shorthand);
+
         Optional<Link> resolvedLink = linkService.retrieveAndIncrementClickCount(shorthand);
         if(resolvedLink.isEmpty()) {
             log.warn("redirectToLink, no link found for shorthand: {}", shorthand);
             return "redirect:/";
         }
 
-        log.info("redirectToLink, resolved link: {} -> {}",
+        log.debug("redirectToLink, resolved link: {} -> {}",
                 resolvedLink.get().getShorthand(),
                 resolvedLink.get().getLink());
 
@@ -159,28 +163,17 @@ public class PageController {
         }
     }
 
-    private static String getUserAgent(HttpServletRequest request) {
-        return request.getHeader("User-Agent") != null ? request.getHeader("User-Agent") : "Unknown";
-    }
-
-
-
+    /**
+     * Serves the about page with information about the application.
+     * @param model Attribute model for the view.
+     * @return Returns the about view with model attributes.
+     */
     @GetMapping("/about")
     public String about(Model model) {
+        log.info("about, request to serve about page");
+
         model.addAttribute("UUID3", userSession.getAuthorizeUUIDs().get(2));
         log.debug("about, about page was served");
         return "about";
-    }
-
-    private String getClientIpAddress(HttpServletRequest request) {
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isEmpty()) {
-            return xForwardedFor.split(",")[0].trim();
-        }
-        String xRealIp = request.getHeader("X-Real-IP");
-        if (xRealIp != null && !xRealIp.isEmpty()) {
-            return xRealIp;
-        }
-        return request.getRemoteAddr();
     }
 }
