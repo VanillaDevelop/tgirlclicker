@@ -5,7 +5,8 @@ import gg.nya.tgirlclicker.repository.LinkRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
- import org.springframework.cache.annotation.Cacheable;
+ import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class LinkService {
      * @param shorthand the shorthand of the link to retrieve
      * @return an Optional containing the Link if found, or empty if not found
      */
+    @CacheEvict(value = "totalClickCount", allEntries = true)
     public Optional<Link> retrieveAndIncrementClickCount(String shorthand) {
         log.debug("retrieveAndIncrementClickCount, searching for shorthand: {}", shorthand);
 
